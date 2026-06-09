@@ -77,11 +77,11 @@ jobs:
 
       - name: Run PHPUnit Integration Test
         run: |
-          vendor/bin/phpunit test/ApiProxyTest.php
+          php vendor/bin/phpunit test/ApiProxyTest.php
 
       - name: Run PHPUnit System Test
         run: |
-          vendor/bin/phpunit test/SystemTest.php
+          php vendor/bin/phpunit test/SystemTest.php
 
       - name: Generate JaCoCo Coverage
         run: |
