@@ -17,12 +17,15 @@ class SystemTest extends TestCase
     {
         $host = 'http://localhost:9515';
 
+
         $options = new ChromeOptions();
 
-        // Chrome portable milik Rama
+        if (PHP_OS_FAMILY === 'Windows') {
+
         $options->setBinary(
             'C:\\Users\\muham\\Downloads\\Semester 6\\Penjaminan Kualitas Perangkat Lunak\\chrome-win64\\chrome-win64\\chrome.exe'
-        );
+            );
+        }
 
         $options->addArguments([
             '--headless=new',
