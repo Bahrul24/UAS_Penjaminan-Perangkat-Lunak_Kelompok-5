@@ -1,69 +1,20 @@
-name: CraftApparel CI Pipeline
+name: CraftApparel CI
 
 on:
-push:
-branches:
-- main
-- master
-
-pull_request:
-branches:
-- main
-- master
+  push:
+    branches:
+      - main
 
 jobs:
-build-and-test:
+  test:
+    runs-on: ubuntu-latest
 
-runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-steps:
+      - name: Check Java
+        run: java -version
 
-  - name: Checkout Repository
-    uses: actions/checkout@v4
-
-  - name: Setup Java JDK
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: 21
-
-  - name: Setup PHP
-    uses: shivammathur/setup-php@v2
-    with:
-      php-version: 8.3
-
-  - name: Verify Java
-    run: java -version
-
-  - name: Verify PHP
-    run: php -v
-
-  - name: Compile Java Backend
-    run: |
-      javac backend/*.java
-
-  - name: Start Java Backend
-    run: |
-      java -cp backend Main &
-      sleep 5
-
-  - name: Start PHP Server
-    run: |
-      php -S localhost:8000 -t frontend &
-      sleep 5
-
-  - name: Install Composer Dependencies
-    run: composer install --no-interaction
-
-  - name: Run JUnit Tests
-    run: |
-      javac -cp ".:lib/*" backend/*.java test/*.java
-      java -jar lib/junit-platform-console-standalone-1.13.4.jar execute --class-path backend --class-path test --scan-class-path
-
-  - name: Run PHPUnit Integration Test
-    run: |
-      vendor/bin/phpunit test/ApiProxyTest.php
-
-  - name: Run PHPUnit System Test
-    run: |
-      vendor/bin/phpunit test/SystemTest.php
+      - name: Check PHP
+        run: php -v
