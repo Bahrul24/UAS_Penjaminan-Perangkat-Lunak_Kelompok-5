@@ -1,0 +1,1 @@
+{"version":2,"defects":{"ApiProxyTest::testSendOrderToJavaAPI":7,"SystemTest::testHomepageAndSearchFeature":7,"SystemTest::testOrderFormFlow":8},"times":{"ApiProxyTest::testSendOrderToJavaAPI":0.031,"SystemTest::testHomepageAndSearchFeature":0.23,"SystemTest::testOrderAPIEndToEnd":0.037,"SystemTest::testOrderFormFlow":1.443}}

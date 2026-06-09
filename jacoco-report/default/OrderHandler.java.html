@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">OrderHandler.java</span></div><h1>OrderHandler.java</h1><pre class="source lang-java linenums">import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.UUID;
+import java.util.Locale;
+
+<span class="fc" id="L12">public class OrderHandler implements HttpHandler{</span>
+
+    @Override
+    public void handle(HttpExchange exchange) throws IOException{
+        // Node 1: Decision - HTTP Method POST?
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (&quot;POST&quot;.equals(exchange.getRequestMethod())) {</span>
+<span class="fc" id="L18">            String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);</span>
+
+<span class="fc" id="L20">            String type = extractValue(requestBody, &quot;type&quot;);</span>
+<span class="fc" id="L21">            int qty = Integer.parseInt(extractValue(requestBody, &quot;qty&quot;));</span>
+<span class="fc" id="L22">            boolean isCustom = Boolean.parseBoolean(extractValue(requestBody, &quot;isCustom&quot;));</span>
+<span class="fc" id="L23">            int complexity = Integer.parseInt(extractValue(requestBody, &quot;complexity&quot;));</span>
+<span class="fc" id="L24">            String notes = extractValue(requestBody, &quot;notes&quot;);</span>
+
+<span class="fc" id="L26">            double price = 0;</span>
+            // Node 2: Decision - type == tshirt?
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            if (type.equals(&quot;tshirt&quot;)) {            </span>
+<span class="fc" id="L29">                price = 50000;                      </span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                if (qty &gt; 100) {                    // Node 3: Decision - qty &gt; 100?</span>
+<span class="fc" id="L31">                    price = price * 0.8;            // Node 4: Action - discount 20%</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                } else if (qty &gt; 50) {              // Node 5: Decision - qty &gt; 50?</span>
+<span class="nc" id="L33">                    price = price * 0.9;            // Node 6: Action - discount 10%</span>
+                }
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">            } else if (type.equals(&quot;hoodie&quot;)) {     // Node 7: Decision - type == hoodie?</span>
+<span class="fc" id="L36">                price = 150000;</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                if (qty &gt; 20) {                     // Node 8: Decision - qty &gt; 20?</span>
+<span class="fc" id="L38">                    price = price * 0.85;           // Node 9: Action - discount 15%</span>
+                }
+            }
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            if (isCustom) {                          // Node 10: Decision - isCustom?</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                if (complexity == 1) {              // Node 11: Decision - complexity == 1?</span>
+<span class="fc" id="L44">                    price += 10000;                // Node 12: Action</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                } else if (complexity == 2) {        // Node 13: Decision - complexity == 2?</span>
+<span class="fc" id="L46">                    price += 25000;                 // Node 14: Action</span>
+                } else {                           
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                    if (qty &lt; 10) {                 // Node 15: Decision - qty &lt; 10?</span>
+<span class="fc" id="L49">                        price += 50000;              // Node 16: Action</span>
+                    } else {
+<span class="nc" id="L51">                        price += 35000;             // Node 17: Action</span>
+                    }
+                }
+            }
+
+<span class="fc" id="L56">            double total = price * qty;             // Node 18: Final computation</span>
+<span class="fc" id="L57">            String orderId = UUID.randomUUID().toString();</span>
+
+             // Node 19: Build JSON order record
+<span class="fc" id="L60">            String newOrderRecord = String.format(Locale.US, &quot;{\&quot;id\&quot;:\&quot;%s\&quot;,\&quot;type\&quot;:\&quot;%s\&quot;,\&quot;qty\&quot;:%d,\&quot;total\&quot;:%.2f,\&quot;notes\&quot;:\&quot;%s\&quot;}&quot;,</span>
+<span class="fc" id="L61">            orderId, type, qty, total, notes);</span>
+
+            try {
+                // Node 20: Read existing database file
+<span class="fc" id="L65">                String existingContent = new String(Files.readAllBytes(Paths.get(&quot;data/orders.json&quot;)), StandardCharsets.UTF_8).trim();</span>
+                
+                // Ambil isi array yang sudah ada (hapus [ dan ])
+<span class="fc" id="L68">                String inner = existingContent.substring(1, existingContent.length() - 1).trim();</span>
+<span class="fc" id="L69">                inner = inner.replaceAll(&quot;^\\[,?\\s*&quot;, &quot;&quot;).replaceAll(&quot;,?\\s*\\]$&quot;, &quot;&quot;).trim();</span>
+                
+                String newContent;
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (inner.isEmpty()) {</span>
+<span class="nc" id="L73">                    newContent = &quot;[\n&quot; + newOrderRecord + &quot;\n]&quot;;</span>
+                } else {
+<span class="fc" id="L75">                    newContent = &quot;[\n&quot; + inner + &quot;,\n&quot; + newOrderRecord + &quot;\n]&quot;;</span>
+                }
+                
+                // Node 21: Write updated JSON file
+<span class="fc" id="L79">                Files.write(Paths.get(&quot;data/orders.json&quot;), newContent.getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);</span>
+<span class="nc" id="L80">            } catch (Exception e) {</span>
+                // Node 22: Exception handling
+<span class="nc" id="L82">                e.printStackTrace();</span>
+<span class="fc" id="L83">            }</span>
+
+
+            // Node 23: Build response
+<span class="fc" id="L87">            String responseBody = &quot;{\&quot;status\&quot;:\&quot;success\&quot;, \&quot;orderId\&quot;:\&quot;&quot; + orderId + &quot;\&quot;, \&quot;totalPrice\&quot;:&quot; + total + &quot;}&quot;;</span>
+<span class="fc" id="L88">            exchange.getResponseHeaders().set(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+            // Node 24: Send HTTP 200
+<span class="fc" id="L90">            exchange.sendResponseHeaders(200, responseBody.length());</span>
+
+<span class="fc" id="L92">            try (OutputStream os = exchange.getResponseBody()) {</span>
+<span class="fc" id="L93">                os.write(responseBody.getBytes());</span>
+            }
+<span class="fc" id="L95">        } else {</span>
+            // Node 25: HTTP 405 Method Not Allowed
+<span class="fc" id="L97">            exchange.sendResponseHeaders(405, -1);</span>
+        }
+        // Node 26: End handle()
+<span class="fc" id="L100">    }</span>
+
+    private String extractValue(String json, String key){
+<span class="fc" id="L103">        String target = &quot;\&quot;&quot; + key + &quot;\&quot;:&quot;;</span>
+<span class="fc" id="L104">        int start = json.indexOf(target);</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (start == -1) return &quot;0&quot;;</span>
+<span class="fc" id="L106">        start += target.length();</span>
+
+<span class="fc" id="L108">        int end = json.indexOf(&quot;,&quot;, start);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (end == -1) {</span>
+<span class="fc" id="L110">            end = json.indexOf(&quot;}&quot;, start);</span>
+        }
+
+<span class="fc" id="L113">        return json.substring(start, end).replaceAll(&quot;\&quot;&quot;, &quot;&quot;).trim();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
