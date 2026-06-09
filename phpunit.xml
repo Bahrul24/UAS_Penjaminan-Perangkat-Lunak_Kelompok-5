@@ -4,7 +4,7 @@
       xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
       bootstrap="vendor/autoload.php">
 
-```
+
 <testsuites>
     <testsuite name="CraftApparel Tests">
         <directory>test</directory>
@@ -16,6 +16,6 @@
         <directory suffix=".php">frontend</directory>
     </include>
 </source>
-```
+
 
 </phpunit>
