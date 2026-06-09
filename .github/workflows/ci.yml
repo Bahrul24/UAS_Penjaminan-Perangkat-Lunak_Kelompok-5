@@ -7,14 +7,37 @@ on:
 
 jobs:
   test:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Check Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Verify Java
         run: java -version
 
-      - name: Check PHP
+      - name: Verify PHP
         run: php -v
+
+      - name: Compile Backend
+        run: javac backend/*.java
+
+      - name: Run JUnit Test
+        run: |
+          java -jar lib/junit-platform-console-standalone-1.13.4.jar execute \
+          --class-path backend \
+          --class-path test \
+          --scan-class-path
