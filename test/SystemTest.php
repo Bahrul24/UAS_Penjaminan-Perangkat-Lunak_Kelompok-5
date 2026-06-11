@@ -15,18 +15,12 @@ class SystemTest extends TestCase
 
     protected function setUp(): void
     {
+        // Chromedriver kamu sudah jalan di port ini
         $host = 'http://localhost:9515';
-
 
         $options = new ChromeOptions();
 
-        if (PHP_OS_FAMILY === 'Windows') {
-
-        $options->setBinary(
-            'C:\\Users\\muham\\Downloads\\Semester 6\\Penjaminan Kualitas Perangkat Lunak\\chrome-win64\\chrome-win64\\chrome.exe'
-            );
-        }
-
+        // Argument Chrome untuk testing (headless)
         $options->addArguments([
             '--headless=new',
             '--disable-gpu',
@@ -36,16 +30,9 @@ class SystemTest extends TestCase
         ]);
 
         $capabilities = DesiredCapabilities::chrome();
+        $capabilities->setCapability(ChromeOptions::CAPABILITY, $options);
 
-        $capabilities->setCapability(
-            ChromeOptions::CAPABILITY,
-            $options
-        );
-
-        $this->driver = RemoteWebDriver::create(
-            $host,
-            $capabilities
-        );
+        $this->driver = RemoteWebDriver::create($host, $capabilities);
     }
 
     public function testOrderFormFlow()
@@ -83,7 +70,6 @@ class SystemTest extends TestCase
             ->findElement(WebDriverBy::id('complexity'));
 
         $complexity->clear();
-
         $complexity->sendKeys('1');
 
         // Isi catatan
@@ -93,31 +79,27 @@ class SystemTest extends TestCase
 
         // Submit form
         $this->driver
-            ->findElement(
-                WebDriverBy::cssSelector(
-                    '[data-testid="btn-submit"]'
-                )
-            )
+            ->findElement(WebDriverBy::cssSelector('[data-testid="btn-submit"]'))
             ->click();
 
-        // Tunggu backend memproses
+        // Tunggu proses backend
         sleep(2);
 
-        // Ambil seluruh teks halaman hasil
+        // Ambil hasil halaman
         $resultText = $this->driver
             ->findElement(WebDriverBy::tagName('body'))
             ->getText();
 
-        // Validasi response muncul
+        // Validasi tidak kosong
         $this->assertNotEmpty($resultText);
 
-        // Validasi status HTTP muncul
+        // Validasi ada status HTTP
         $this->assertStringContainsString(
             'Status HTTP',
             $resultText
         );
 
-        // Validasi response sukses
+        // Validasi success response
         $this->assertStringContainsString(
             'success',
             strtolower($resultText)

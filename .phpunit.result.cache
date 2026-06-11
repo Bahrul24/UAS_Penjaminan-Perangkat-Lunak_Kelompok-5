@@ -1,1 +1,1 @@
-{"version":2,"defects":{"SystemTest::testOrderFormFlow":8},"times":{"ApiProxyTest::testSendOrderToJavaAPI":0.052,"SystemTest::testOrderFormFlow":2.458}}
+{"version":2,"defects":{"SystemTest::testOrderFormFlow":8,"ApiProxyTest::testSendOrderToJavaAPI":7},"times":{"ApiProxyTest::testSendOrderToJavaAPI":0.076,"SystemTest::testOrderFormFlow":2.386,"FrontendCoverageTest::testIndexPageLoads":0.014,"FrontendCoverageTest::testProcessPageExecution":0.04}}

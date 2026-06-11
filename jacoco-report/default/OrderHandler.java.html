@@ -69,8 +69,8 @@ import java.util.Locale;
 <span class="fc" id="L69">                inner = inner.replaceAll(&quot;^\\[,?\\s*&quot;, &quot;&quot;).replaceAll(&quot;,?\\s*\\]$&quot;, &quot;&quot;).trim();</span>
                 
                 String newContent;
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (inner.isEmpty()) {</span>
-<span class="nc" id="L73">                    newContent = &quot;[\n&quot; + newOrderRecord + &quot;\n]&quot;;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                if (inner.isEmpty()) {</span>
+<span class="fc" id="L73">                    newContent = &quot;[\n&quot; + newOrderRecord + &quot;\n]&quot;;</span>
                 } else {
 <span class="fc" id="L75">                    newContent = &quot;[\n&quot; + inner + &quot;,\n&quot; + newOrderRecord + &quot;\n]&quot;;</span>
                 }
